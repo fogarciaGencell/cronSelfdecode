@@ -6,6 +6,8 @@
 package gencell.croncargaarchivos.ejb;
 
 import gencell.croncargaarchivos.entities.VWCronArchivosCarga;
+import gencell.croncargaarchivos.entities.VWCronSelfdecodeCargaArchivos;
+import gencell.croncargaarchivos.entities.VWCronSelfdecodeListos;
 import gencell.croncargaarchivos.selfdecode.ProfilePersonaSelfdecode;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,9 +171,34 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
         if (q.getResultList() == null || q.getResultList().isEmpty()) {
             return null;
         } else {
-            return (ProfilePersonaSelfdecode) q.getResultList();
+            return (ProfilePersonaSelfdecode) q.getResultList().get(0);
         }
        
+    }
+
+//    @Override
+//    public List<VWCronSelfdecodeCargaArchivos> obtenerArchivosSelfdecode(Integer idPeticion) {
+//        em.getEntityManagerFactory().getCache().evictAll();
+//        String query = "select * from VWCronSelfdecodeCargaArchivos where idPeticion = "+ idPeticion+ " limit 2;";
+//        Query q = em.createNativeQuery(query, VWCronSelfdecodeCargaArchivos.class);
+//        if (q.getResultList() == null || q.getResultList().isEmpty()) {
+//            return null;
+//        } else {
+//            return (List<VWCronSelfdecodeCargaArchivos>) q.getResultList();
+//        }
+//        
+//    }
+
+    @Override
+    public List<VWCronSelfdecodeListos> obtenerArchivosListos(Integer idPeticion) {
+        em.getEntityManagerFactory().getCache().evictAll();
+        String query = "select * from VWCronSelfdecodeListos where idPeticion = "+ idPeticion+ " limit 2;";
+        Query q = em.createNativeQuery(query, VWCronSelfdecodeListos.class);
+        if (q.getResultList() == null || q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (List<VWCronSelfdecodeListos>) q.getResultList();
+        }
     }
 
 }

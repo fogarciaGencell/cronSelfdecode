@@ -7,6 +7,8 @@ package gencell.croncargaarchivos.ejb;
 
 
 import gencell.croncargaarchivos.entities.VWCronArchivosCarga;
+import gencell.croncargaarchivos.entities.VWCronSelfdecodeCargaArchivos;
+import gencell.croncargaarchivos.entities.VWCronSelfdecodeListos;
 import gencell.croncargaarchivos.selfdecode.ProfilePersonaSelfdecode;
 import java.util.List;
 import javax.ejb.Local;
@@ -44,7 +46,11 @@ public interface SessionBeanBaseFachadaLocal {
 
     public void actualizarEstadoPeticionIdVarsomeBioLab(Integer id, String estado, String idVarsome, String porcentaje);
 
-    public ProfilePersonaSelfdecode consultarProfile(Integer idPeticion);    
+    public ProfilePersonaSelfdecode consultarProfile(Integer idPeticion);  
+    
+    //public List<VWCronSelfdecodeCargaArchivos> obtenerArchivosSelfdecode(Integer idPeticion);
+    
+    public List<VWCronSelfdecodeListos> obtenerArchivosListos(Integer idPeticion);
     
     
 }

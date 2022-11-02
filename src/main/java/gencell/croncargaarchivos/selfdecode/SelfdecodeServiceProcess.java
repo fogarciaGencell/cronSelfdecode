@@ -17,7 +17,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import gencell.croncargaarchivos.ejb.SessionBeanBaseFachadaLocal;
-import gencell.croncargaarchivos.entities.CargueArchivosSelf;
+import gencell.croncargaarchivos.entities.LogCargueArchivosSelf;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -349,8 +349,9 @@ public class SelfdecodeServiceProcess {
 
     // --------------------------------------------------------------------------------------------------
     // Proceso Main
-    public void iniciarEnvioArchivoSelfdecode(String profile, String forwardReads, String reverseReads, Integer idPersona)  {
-
+    public void iniciarEnvioArchivoSelfdecode(String profile, String forwardReads, String reverseReads, Integer idPersona, Integer idPeticion)  {
+        
+        Gson gson = new Gson();
         String fileId = "";
         String fileIdConsulta = "";
         String uploadId = "";
@@ -362,11 +363,19 @@ public class SelfdecodeServiceProcess {
         String mensaje = "";
         String succedd = "";
         StartUploadDAO startUploadDAO = new StartUploadDAO();
-        CargueArchivosSelf archivosSelf = new CargueArchivosSelf();
-
+        LogCargueArchivosSelf archivosSelf = new LogCargueArchivosSelf();
+        EnviarArchivosSelfdecode enviarArchivosSelfdecode = new EnviarArchivosSelfdecode();
+        
         System.out.println("Inicia Proceso ");
         fileId = createGenomeFile(profile);
 
+        //Variables de los datos enviados a selfdecode
+        enviarArchivosSelfdecode.setProfile(profile);
+        enviarArchivosSelfdecode.setForwardReads(forwardReads);
+        enviarArchivosSelfdecode.setReverseReads(reverseReads);
+        
+        String jsonData = gson.toJson(enviarArchivosSelfdecode);
+        
         if (fileId != null) {
 
             startUploadDAO = startUpload(forwardReads, reverseReads, fileId);
@@ -377,11 +386,7 @@ public class SelfdecodeServiceProcess {
             System.out.println("Inicia Cargue de Archivos");
             uploadFile(forwardReads, url1);
             uploadFile(reverseReads, url2);
-            //ejecutarCurlLinux(forwardReads, url1);
-            //ejecutarCurlLinux(reverseReads, url2);
             System.out.println("Por favor espere.....");
-            //ejecutarCurl(reverseReads, url2);
-            //Thread.sleep(100*1000);
             succedd = completeUpload(uploadId);
 
             if (succedd == "true") {
@@ -396,11 +401,14 @@ public class SelfdecodeServiceProcess {
 
             System.out.println("Estado File: " + estadoScan);
             
-            // Guarda datos en la tabla como registro 
+            // Guarda datos en la tabla LogCargueArchivosSelf como registro 
             archivosSelf.setIdProfileSelfdecode(profile);
             archivosSelf.setIdGenomeFile(fileId);
-            archivosSelf.setEstado(succedd);
+            archivosSelf.setEstado(estadoScan);
             archivosSelf.setIdPersonas(idPersona);
+            archivosSelf.setIdPeticion(idPeticion);
+            archivosSelf.setDatosEnviados(jsonData);
+            
 
             System.out.println("Guardando....");
             sessionBeanBaseFachada.Crear(archivosSelf);
@@ -448,8 +456,10 @@ public class SelfdecodeServiceProcess {
                 // Guarda datos en la tabla como registro 
                 archivosSelf.setIdProfileSelfdecode(profile);
                 archivosSelf.setIdGenomeFile(fileId);
-                archivosSelf.setEstado(succedd);
+                archivosSelf.setEstado(estadoScan);
                 archivosSelf.setIdPersonas(idPersona);
+                archivosSelf.setIdPeticion(idPeticion);
+                archivosSelf.setDatosEnviados(jsonData);
 
                 System.out.println("Guardando....");
                 sessionBeanBaseFachada.Crear(archivosSelf);

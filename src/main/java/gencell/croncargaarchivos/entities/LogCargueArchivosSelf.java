@@ -23,16 +23,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author USUARIO
  */
 @Entity
-@Table(name = "CargueArchivosSelf")
+@Table(name = "LogCargueArchivosSelf")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CargueArchivosSelf.findAll", query = "SELECT c FROM CargueArchivosSelf c")
-    , @NamedQuery(name = "CargueArchivosSelf.findById", query = "SELECT c FROM CargueArchivosSelf c WHERE c.id = :id")
-    , @NamedQuery(name = "CargueArchivosSelf.findByIdPersonas", query = "SELECT c FROM CargueArchivosSelf c WHERE c.idPersonas = :idPersonas")
-    , @NamedQuery(name = "CargueArchivosSelf.findByIdProfileSelfdecode", query = "SELECT c FROM CargueArchivosSelf c WHERE c.idProfileSelfdecode = :idProfileSelfdecode")
-    , @NamedQuery(name = "CargueArchivosSelf.findByIdGenomeFile", query = "SELECT c FROM CargueArchivosSelf c WHERE c.idGenomeFile = :idGenomeFile")
-    , @NamedQuery(name = "CargueArchivosSelf.findByEstado", query = "SELECT c FROM CargueArchivosSelf c WHERE c.estado = :estado")})
-public class CargueArchivosSelf implements Serializable {
+    @NamedQuery(name = "LogCargueArchivosSelf.findAll", query = "SELECT l FROM LogCargueArchivosSelf l")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findById", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.id = :id")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByIdPersonas", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.idPersonas = :idPersonas")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByIdPeticion", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.idPeticion = :idPeticion")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByDatosEnviados", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.datosEnviados = :datosEnviados")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByIdProfileSelfdecode", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.idProfileSelfdecode = :idProfileSelfdecode")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByIdGenomeFile", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.idGenomeFile = :idGenomeFile")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByEstado", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.estado = :estado")})
+public class LogCargueArchivosSelf implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -42,6 +44,11 @@ public class CargueArchivosSelf implements Serializable {
     private Integer id;
     @Column(name = "idPersonas")
     private Integer idPersonas;
+    @Column(name = "idPeticion")
+    private Integer idPeticion;
+    @Size(max = 1000)
+    @Column(name = "datosEnviados")
+    private String datosEnviados;
     @Size(max = 200)
     @Column(name = "idProfileSelfdecode")
     private String idProfileSelfdecode;
@@ -52,10 +59,10 @@ public class CargueArchivosSelf implements Serializable {
     @Column(name = "estado")
     private String estado;
 
-    public CargueArchivosSelf() {
+    public LogCargueArchivosSelf() {
     }
 
-    public CargueArchivosSelf(Integer id) {
+    public LogCargueArchivosSelf(Integer id) {
         this.id = id;
     }
 
@@ -73,6 +80,22 @@ public class CargueArchivosSelf implements Serializable {
 
     public void setIdPersonas(Integer idPersonas) {
         this.idPersonas = idPersonas;
+    }
+
+    public Integer getIdPeticion() {
+        return idPeticion;
+    }
+
+    public void setIdPeticion(Integer idPeticion) {
+        this.idPeticion = idPeticion;
+    }
+
+    public String getDatosEnviados() {
+        return datosEnviados;
+    }
+
+    public void setDatosEnviados(String datosEnviados) {
+        this.datosEnviados = datosEnviados;
     }
 
     public String getIdProfileSelfdecode() {
@@ -109,10 +132,10 @@ public class CargueArchivosSelf implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CargueArchivosSelf)) {
+        if (!(object instanceof LogCargueArchivosSelf)) {
             return false;
         }
-        CargueArchivosSelf other = (CargueArchivosSelf) object;
+        LogCargueArchivosSelf other = (LogCargueArchivosSelf) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -121,7 +144,7 @@ public class CargueArchivosSelf implements Serializable {
 
     @Override
     public String toString() {
-        return "gencell.croncargaarchivos.entities.CargueArchivosSelf[ id=" + id + " ]";
+        return "gencell.croncargaarchivos.entities.LogCargueArchivosSelf[ id=" + id + " ]";
     }
     
 }
