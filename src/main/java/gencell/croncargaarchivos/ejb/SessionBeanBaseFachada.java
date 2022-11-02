@@ -201,4 +201,37 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
         }
     }
 
+    @Override
+    public void actualizarEstadoBiolabSelfdecode(Integer idPeticion, String estado, String profile, String porcentaje) {
+        
+        try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            String query = "UPDATE PeticionBioLab SET estado = '" + estado + "', idVarsome = '" + profile + "' , porcentaje='" + porcentaje + "' WHERE idPeticion = '" + idPeticion + "';";
+            Query q = em.createNativeQuery(query);
+            Integer retorno = q.executeUpdate();
+            System.out.print("Resultado actualizarEstadoBiolabSelfdecode " + retorno);
+            //return retorno.toString();
+        } catch (Exception e) {
+            System.out.print("Error en: actualizarEstadoBiolabSelfdecode " + e.getMessage());
+            e.printStackTrace();
+            //return "Error: " + e.getMessage();
+        }
+    }
+
+    @Override
+    public void actualizarEstadoYDescPeticionBioLabSelfdecode(Integer id, String estado, String descripcion, String porcentaje) {
+         try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            String query = "UPDATE PeticionBioLab SET estado = '" + estado + "' , descripcion = '" + descripcion + "' , porcentaje='" + porcentaje + "' WHERE id = '" + id + "';";
+            Query q = em.createNativeQuery(query);
+            Integer retorno = q.executeUpdate();
+            System.out.print("Resultado actualizarEstadoPeticionBioLab Selfdecode " + retorno);
+            //return retorno.toString();
+        } catch (Exception e) {
+            System.out.print("Error en: actualizarEstadoPeticionBioLab Selfdecode" + e.getMessage());
+            e.printStackTrace();
+            //return "Error: " + e.getMessage();
+        }
+    }
+
 }

@@ -391,6 +391,7 @@ public class SelfdecodeServiceProcess {
 
             if (succedd == "true") {
                 mensaje = "Exitoso";
+                sessionBeanBaseFachada.actualizarEstadoBiolabSelfdecode(idPeticion, "ENVIADO-SELFDECODE", profile, "80");
             }
             if (succedd == "false") {
                 mensaje = "Fallido";
@@ -409,7 +410,7 @@ public class SelfdecodeServiceProcess {
             archivosSelf.setIdPeticion(idPeticion);
             archivosSelf.setDatosEnviados(jsonData);
             
-
+            
             System.out.println("Guardando....");
             sessionBeanBaseFachada.Crear(archivosSelf);
             System.out.println("Guardado");
@@ -443,6 +444,7 @@ public class SelfdecodeServiceProcess {
            
                 if (succedd == "true") {
                     mensaje = "Exitoso";
+                    sessionBeanBaseFachada.actualizarEstadoBiolabSelfdecode(idPeticion, "ENVIADO-SELFDECODE", profile, "80");
                 }
                 if (succedd == "false") {
                     mensaje = "Fallido";

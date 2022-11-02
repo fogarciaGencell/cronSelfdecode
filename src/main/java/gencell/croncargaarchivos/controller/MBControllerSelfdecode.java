@@ -5,7 +5,6 @@
  */
 package gencell.croncargaarchivos.controller;
 
-import com.google.gson.Gson;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -13,40 +12,20 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import gencell.croncargaarchivos.ejb.SessionBeanBaseFachadaLocal;
 import gencell.croncargaarchivos.entities.Cron;
+import gencell.croncargaarchivos.entities.VWCronSelfFileId;
 import gencell.croncargaarchivos.entities.VWCronSelfdecodeCargaArchivos;
 import gencell.croncargaarchivos.entities.VWCronSelfdecodeListos;
 import gencell.croncargaarchivos.selfdecode.ProfilePersonaSelfdecode;
 import gencell.croncargaarchivos.selfdecode.SelfdecodeServiceProcess;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
 
-@Named(value = "MBControllerSelf")
+@Named(value = "MBControllerSelfdecode")
 @SessionScoped
 public class MBControllerSelfdecode implements Serializable {
 
@@ -54,8 +33,8 @@ public class MBControllerSelfdecode implements Serializable {
     private SessionBeanBaseFachadaLocal sessionBeanBaseFachada;
     private Cron monitorCron;
     public static final String PATH_ARCHIVOS_DEV = "public/files/dev/laboratorio_gp/ngs";
-    public static final String PATH_ARCHIVOS_VARSOME_DEV = "d:\\";
-    public static final String PATH_ARCHIVOS_VARSOME = "/var/www/html/files_varsome/";
+    public static final String PATH_ARCHIVOS_SELFDECODE_DEV = "d:\\";
+    public static final String PATH_ARCHIVOS_SELFDECODE = "/var/www/html/files_varsome/";
     public static final String HOST = "134.209.114.100";
     public static final String USUARIO = "gencell";
     public static final String CONTRASENA = "Gp.ftp123";
@@ -73,110 +52,6 @@ public class MBControllerSelfdecode implements Serializable {
         }
     }
 
-    /*public void ejecutarTareaCargaArchivos() {
-        try {
-            if (sessionBeanBaseFachada == null) {
-                System.out.println("**************** fachada null en ejecutar tarea CARGA ARCHIVOS");
-                return;
-            }
-            Date fechaInicio = new Date();
-            monitorCron = sessionBeanBaseFachada.BuscarPorID(Cron.class, 1);
-            List<VWCronArchivosCarga> listArchivosCarga;
-            listArchivosCarga = sessionBeanBaseFachada.obtenerArchivosCarga();
-            if (listArchivosCarga != null && !listArchivosCarga.isEmpty()) {
-                System.out.println("**************** ENCUENTRA ARCHIVOS PARA CARGAR: " + listArchivosCarga.size());
-                this.cargarArchivos(listArchivosCarga);
-            }
-            if (monitorCron != null) {
-                monitorCron.setFechaInicio(fechaInicio);
-                monitorCron.setFechaFinal(new Date());
-                sessionBeanBaseFachada.Editar(monitorCron);
-            }
-
-        } catch (Exception e) {
-            System.out.println("Excepcion ejecutarTareaCargaArchivos" + e.getMessage());
-            e.printStackTrace();
-        }
-    }*/
-
- /*private void cargarArchivos(List<VWCronArchivosCarga> listArchivosCarga) {
-        for (int i = 0; i < listArchivosCarga.size(); i++) {
-            sessionBeanBaseFachada.actualizarEstadoResultadosOrden(listArchivosCarga.get(i).getIdResultadosOrden(), "CARGANDO");
-        }
-        for (int i = 0; i < listArchivosCarga.size(); i++) {
-            VWCronArchivosCarga archivoCarga = listArchivosCarga.get(i);
-            try {
-                File archivo = new File("D:\\pruebaNGS\\" + archivoCarga.getUrlResultado());
-                if (archivo.exists()) {
-                    String numbreArchivo = this.saveFileFTP(PATH_ARCHIVOS_DEV, archivo);
-                    if (archivo != null) {
-                        sessionBeanBaseFachada.actualizarEstadoResultadosOrden(listArchivosCarga.get(i).getIdResultadosOrden(), "CARGADO");
-                        sessionBeanBaseFachada.actualizarURLResultadosOrden(listArchivosCarga.get(i).getIdResultadosOrden(), numbreArchivo);
-                        archivo.delete();
-                    } else {
-                        sessionBeanBaseFachada.actualizarEstadoResultadosOrden(listArchivosCarga.get(i).getIdResultadosOrden(), "ERROR");
-                    }
-                }
-            } catch (Exception ex) {
-                System.out.println("**************** ERROR AL CARGAR EL ARCHIVO DE CON IDORDENRESULTADO: " + archivoCarga.getIdResultadosOrden());
-                ex.printStackTrace();
-            }
-        }
-    }*/
-
- /* private String saveFileFTP(String ruta, File archivo) throws Exception {
-        JSch jsch = new JSch();
-        FileInputStream fis = null;
-        ChannelSftp sftp = null;
-        Session session = null;
-        try {
-            session = jsch.getSession(USUARIO, HOST, 22);
-            session.setConfig("PreferredAuthentications", "password");
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.setPassword(CONTRASENA);
-            session.connect();
-            Channel channel = session.openChannel("sftp");
-            sftp = (ChannelSftp) channel;
-            sftp.connect();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmssS-");
-            String nombreArchivoSubida = archivo.getName();
-            String filename = sdf.format(new Date()) + nombreArchivoSubida;
-            fis = new FileInputStream(archivo);
-            sftp.cd(ruta);
-            sftp.put(fis, filename);
-            sftp.disconnect();
-            return ruta + "/" + filename;
-        } catch (JSchException e) {
-            System.out.println("No se pudo realizar la conexión");
-            return null;
-        } finally {
-            if (fis != null) {
-                fis.close();
-            }
-            if (sftp != null) {
-                sftp.disconnect();
-            }
-            if (session != null) {
-                session.disconnect();
-            }
-        }
-    }*/
-
- /* private void saveFileAWS(String ruta) throws Exception {
-        try {
-            String command = "curl --upload-file \"file.fq.gz\" \"https://sd-platform-dev-userdatas3bucket-1ptzap1zmfgnb.s3-accelerate.amazonaws.com/00000000-0000-0000-0000-000000000000/test/gencell-upload3?AWSAccessKeyId=ASIAZXBBM5C3QSJ5D2CM&Signature=4JvzoL0Fs4g4C8GAOo3MTM5GH9I%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEK7%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQCqlpjjEUHOzvtZuocSuzse8uy88unGPm1F5OoV%2FWIQQAIgZDtNWdAT0sxYof1ZjHFuXgb%2Bi87qK20SuWS%2FkXeMIK4qlAMIRxACGgw2Njc5Mzc0NjY1NTEiDIuOqC0%2B3m1qAGw%2FfCrxAl3RLytgo9OpnK5YhKR82tGSymgvOSc6PZeA5YQoTO8zvkNlBx3vL6RrBngspHkitMFKKDrJkHOkqhCH3c6h5gX3ugRIETTcdb3OeUTOOMOGkplvqxRYp%2BvPuBQvgNuMw2xU255EWT6uNXtCC3tEt9%2BZsvPRyS2J%2B25zJGzfhBUu2wio75p1ufWb4c6%2Fdnp%2BYIvCdzEoC%2F%2FPu14bWmRVyqbBrbolUk572VZTVnwQGmrLiTBQCJ6UbgY8lBmVPNEsWXFNLqxYneuw%2B96N96baPaOX2wVJ%2FjaT4pujIN5BIOJxGJHbI5wmRx5OQqAwdQKuLBSQk15g9Pt4uUDLfckMnpO%2FBKT2aNylPMeZ3V%2BYeLX8WhwKiOz8JLF48U2MsLWmSmUMlINiWMC9FIfVrP95SXuMYL%2FKFxD7qo%2BUBm%2Bwf6Zao7kCwOQGNRhMaHmFK99hoE0Rjm5zRImAfnkkPDsAXOqdpGEQRyRh%2FjvyMh%2FO5OlvcTDpiO2YBjqmAU1HD77giu9zx06UJ6o7tX47jluBuHUNOfdVy%2BE7E8bHMH9ogzRvniePxFpusa%2FswWecoiMzqh861IQuZ3Dh%2ByN80qXFIEY6EIPTbPN%2F1z4OC6JZ9jyS90yDAfrVy%2F7Mw9L6oTe1VFUCaVmmNqHH4FVfGXSHK83StJJwk1UAFUsACfUmTovtcalXT53zdX1%2Bb3yFyF%2FUWt0P4hNeFwQRkblyCjCySk0%3D&Expires=1662774658\"";
-            Process p = Runtime.getRuntime().exec(command);
-            p.waitFor();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                //output.append(line + "\n");
-                System.out.println(line + "\n");
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }*/
     public void ejecutarTareaCargaArchivosSelfdecode() {
         try {
             if (sessionBeanBaseFachada == null) {
@@ -191,8 +66,8 @@ public class MBControllerSelfdecode implements Serializable {
                 System.out.println("**************** ENCUENTRA ARCHIVOS SELFDECODE PARA CARGAR: " + listArchivosCargaSelfdecode.size());
                 this.cargarArchivosSelfdecode(listArchivosCargaSelfdecode);
             }
-            this.sendPost2(); // Ejecutara el envio a Selfdecode 
-            //this.ejecutarTareaEliminarArchivosSelfdecode();
+            this.sendPost(); // Ejecutara el envio a Selfdecode 
+            this.eliminarArchivosSelfdecode();// Elimina los archivos que estan en estado Complete SELFDECODE
             if (monitorCron != null) {
                 monitorCron.setFechaInicio(fechaInicio);
                 monitorCron.setFechaFinal(new Date());
@@ -239,7 +114,7 @@ public class MBControllerSelfdecode implements Serializable {
             sftp = (ChannelSftp) channel;
             sftp.connect();
             sftp.cd(archivoCar.getUrl());
-            sftp.get(archivoCar.getNombreArchivo(), PATH_ARCHIVOS_VARSOME + archivoCar.getNombreArchivo());
+            sftp.get(archivoCar.getNombreArchivo(), PATH_ARCHIVOS_SELFDECODE + archivoCar.getNombreArchivo());
             sftp.disconnect();
             return true;
         } catch (Exception e) {
@@ -262,7 +137,7 @@ public class MBControllerSelfdecode implements Serializable {
         ChannelSftp sftp = null;
         Session session = null;
         try {
-            File tmp = new File(PATH_ARCHIVOS_VARSOME + archivoCar.getNombreArchivo());
+            File tmp = new File(PATH_ARCHIVOS_SELFDECODE + archivoCar.getNombreArchivo());
             if (!tmp.exists()) {
                 sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLab(archivoCar.getId(), "INICIAL", "EL ARCHIVO EN EL SERVIDOR NO EXISTE", "50");
                 return;
@@ -308,61 +183,34 @@ public class MBControllerSelfdecode implements Serializable {
         }
     }
 
-    private void sendPost(VWCronSelfdecodeCargaArchivos archivoCar) {
+    private void sendPost() {
 
-        RequestVarsome req = new RequestVarsome();
+        //Variables
         String forward_reads = "";
         String reverse_reads = "";
         Integer idPeticion;
         String profile;
         Integer idPaciente;
-        ProfilePersonaSelfdecode profileSelfdecode;
-        SelfdecodeServiceProcess selfdecodeserviceprocess = new SelfdecodeServiceProcess();
-
-        forward_reads = "http://gencellservicetwo.com/files_varsome/" + archivoCar.getNombreArchivo();
-        //reverse_reads = "http://gencellservicetwo.com/files_varsome/" +archivoCar.getNombreArchivo();
-        reverse_reads = "http://gencellservicetwo.com/files_varsome/" + archivoCar.getNombreArchivo().replaceAll("1.", "2.");
-
-        idPeticion = archivoCar.getIdPeticion();
-        profileSelfdecode = sessionBeanBaseFachada.consultarProfile(idPeticion); // IdPaciente y Profile SelfDecode
-
-        profile = profileSelfdecode.getIdProfileSelfdecode();
-        idPaciente = profileSelfdecode.getIdPaciente();
-
-        if ((profile != null) && (forward_reads != null) && (reverse_reads != null) && (idPaciente != null)) {
-
-            selfdecodeserviceprocess.iniciarEnvioArchivoSelfdecode(profile, forward_reads, reverse_reads, idPaciente, idPeticion);
-        } else {
-            System.out.println("Verifique que no tenga datos nulos");
-        }
-    }
-
-    private void sendPost2() {
-
-        RequestVarsome req = new RequestVarsome();
-        String forward_reads = "";
-        String reverse_reads = "";
-        Integer idPeticion;
-        String profile;
-        Integer idPaciente;
-        Integer validador;
         ProfilePersonaSelfdecode profileSelfdecode;
         SelfdecodeServiceProcess selfdecodeserviceprocess = new SelfdecodeServiceProcess();
         //List<VWCronSelfdecodeCargaArchivos> listArchivosCargaSelfdecode;
         List<VWCronSelfdecodeListos> listArchivosListosSelf;
-        listArchivosListosSelf = sessionBeanBaseFachada.BuscarTodos(VWCronSelfdecodeListos.class);// Crea una lista con los objetos que estan listos 6 por consulta
         List<VWCronSelfdecodeListos> archivosOkForwardAndReverse;
 
-        if (!listArchivosListosSelf.isEmpty() || listArchivosListosSelf != null) { // Verifica si se obtiene resultados listos para enviar PENDIENTE SI LA VALIDACION VIENE DE BASE DE DATOS
+        listArchivosListosSelf = sessionBeanBaseFachada.BuscarTodos(VWCronSelfdecodeListos.class);// Crea una lista con los objetos que estan listos 6 por consulta
+
+        if (!listArchivosListosSelf.isEmpty() || listArchivosListosSelf != null) { // Verifica si se obtiene resultados listos para enviar 
 
             for (VWCronSelfdecodeListos archivo : listArchivosListosSelf) {
 
                 idPeticion = archivo.getIdPeticion(); // Obtiene la peticion 
+                // PENDIENTE CAMBIAR EL ESTADO CUANDO SE ENVIA A SELFDECODE PARA QUE NO VULEVA A CONSULTAR
                 archivosOkForwardAndReverse = sessionBeanBaseFachada.obtenerArchivosListos(idPeticion); // consulta los que estan estado cargado-server, trae 2 registros o 1 
 
+                // si aca despues de hacer la consulta no vienen los 2 no se ejecuta 
                 if (archivosOkForwardAndReverse.size() == 2) {
 
-                    if (archivosOkForwardAndReverse.get(0).getIdentificador().equals("1")) { // PENDIENTE VALIDAR LA COMPARACION DEL STRING
+                    if (archivosOkForwardAndReverse.get(0).getIdentificador().equals("1")) { 
                         //listArchivosCargaSelfdecode = sessionBeanBaseFachada.obtenerArchivosSelfdecode(idPeticion); // deberia obtener solo 2 objetos
                         forward_reads = "http://gencellservicetwo.com/files_varsome/" + archivosOkForwardAndReverse.get(0).getNombreArchivo();
                         reverse_reads = "http://gencellservicetwo.com/files_varsome/" + archivosOkForwardAndReverse.get(1).getNombreArchivo();
@@ -386,11 +234,74 @@ public class MBControllerSelfdecode implements Serializable {
                         System.out.println("Verifique que no tenga datos nulos");
                     }
                 } else {
-                    System.out.println("Los archivos no estan listos");
+                    System.out.println("LOS ARCHIVOS NO ESTAN LISTOS O YA FUERON ENVIADOS");
                 }
             }
         } else {
             System.out.println("Los Archivos no estan cargados");
+        }
+    }
+
+    public void eliminarArchivosSelfdecode() {
+
+        List<VWCronSelfFileId> listaFileId;
+        List<VWCronSelfdecodeListos> archivosBorrar; // Para obtener el nombre del archivo a eliminar 
+        SelfdecodeServiceProcess consultarEstado = new SelfdecodeServiceProcess();
+        String estado;
+        String file;
+        Integer idPeticion;
+
+        listaFileId = sessionBeanBaseFachada.BuscarTodos(VWCronSelfFileId.class); // Crea una lista con los objetos maximo 6
+
+        for (VWCronSelfFileId fileIdSelfdecode : listaFileId) {
+
+            idPeticion = fileIdSelfdecode.getIdPeticion();
+            file = fileIdSelfdecode.getIdGenomeFile();
+            estado = consultarEstado.obtenerEstadoFile(file);
+            archivosBorrar = sessionBeanBaseFachada.obtenerArchivosListos(idPeticion); // trae 2 resultados
+
+            if (archivosBorrar.size() == 2) {// valida si vienen los dos archivos para eliminar forward y reverse
+                if (estado != null && estado.equals("COMPLETE")) {
+
+                    File fichero1 = new File(PATH_ARCHIVOS_SELFDECODE + archivosBorrar.get(0).getNombreArchivo());
+                    File fichero2 = new File(PATH_ARCHIVOS_SELFDECODE + archivosBorrar.get(1).getNombreArchivo());
+
+                    // Valida existencia de fichero 1
+                    if (!fichero1.exists()) {
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(archivosBorrar.get(0).getId(), "FINALIZADO", "", "100");
+                        System.out.println("El fichero " + archivosBorrar.get(0).getNombreArchivo() + " ya no existe");
+                        return;
+                    }
+                    
+                    // valida existencia de fichero 2
+                    if (!fichero2.exists()) {
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(archivosBorrar.get(1).getId(), "FINALIZADO", "", "100");
+                        System.out.println("El fichero " + archivosBorrar.get(1).getNombreArchivo() + " ya no existe");
+                        return;
+                    }
+                    
+                    // Elimina Fichero 1
+                    if (fichero1.delete()) {
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(archivosBorrar.get(0).getId(), "", "FINALIZADO", "100");
+                        System.out.println("El fichero "+ archivosBorrar.get(0).getNombreArchivo() + " ha sido borrados satisfactoriamente");
+                    } else {
+                        System.out.println("El fichero " + archivosBorrar.get(0).getNombreArchivo() + " no puede ser borrado");
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(idPeticion, "", "ERROR BORRANDO ARCHIVO", "95");
+                    }
+                    
+                    // Elimina Fichero 2 
+                    if (fichero2.delete()) {
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(archivosBorrar.get(1).getId(), "", "FINALIZADO", "100");
+                        System.out.println("El fichero "+ archivosBorrar.get(1).getNombreArchivo() + " ha sido borrados satisfactoriamente");
+                    } else {
+                        System.out.println("El fichero " + archivosBorrar.get(1).getNombreArchivo() + " no puede ser borrado");
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(idPeticion, "", "ERROR BORRANDO ARCHIVO", "95");
+                    }
+                }
+            }else{
+                System.out.println("ERROR OBTENIENDO LA INFORMACIÓN PARA ELIMINAR, tienen que ser 2 archivos por petición");
+        }
+
         }
     }
 
