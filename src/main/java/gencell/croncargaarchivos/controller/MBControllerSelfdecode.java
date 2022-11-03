@@ -34,10 +34,10 @@ public class MBControllerSelfdecode implements Serializable {
     private Cron monitorCron;
     public static final String PATH_ARCHIVOS_DEV = "public/files/dev/laboratorio_gp/ngs";
     public static final String PATH_ARCHIVOS_SELFDECODE_DEV = "d:\\";
-    public static final String PATH_ARCHIVOS_SELFDECODE = "/var/www/html/files_varsome/";
-    public static final String HOST = "134.209.114.100";
-    public static final String USUARIO = "gencell";
-    public static final String CONTRASENA = "Gp.ftp123";
+    public static final String PATH_ARCHIVOS_SELFDECODE = "/var/www/html/files_selfdecode/";
+   // public static final String HOST = "134.209.114.100";
+   // public static final String USUARIO = "gencell";
+   // public static final String CONTRASENA = "Gp.ftp123";
 
     /**
      * Creates a new instance of MBController
@@ -204,7 +204,6 @@ public class MBControllerSelfdecode implements Serializable {
             for (VWCronSelfdecodeListos archivo : listArchivosListosSelf) {
 
                 idPeticion = archivo.getIdPeticion(); // Obtiene la peticion 
-                // PENDIENTE CAMBIAR EL ESTADO CUANDO SE ENVIA A SELFDECODE PARA QUE NO VULEVA A CONSULTAR
                 archivosOkForwardAndReverse = sessionBeanBaseFachada.obtenerArchivosListos(idPeticion); // consulta los que estan estado cargado-server, trae 2 registros o 1 
 
                 // si aca despues de hacer la consulta no vienen los 2 no se ejecuta 
@@ -212,8 +211,8 @@ public class MBControllerSelfdecode implements Serializable {
 
                     if (archivosOkForwardAndReverse.get(0).getIdentificador().equals("1")) { 
                         //listArchivosCargaSelfdecode = sessionBeanBaseFachada.obtenerArchivosSelfdecode(idPeticion); // deberia obtener solo 2 objetos
-                        forward_reads = "http://gencellservicetwo.com/files_varsome/" + archivosOkForwardAndReverse.get(0).getNombreArchivo();
-                        reverse_reads = "http://gencellservicetwo.com/files_varsome/" + archivosOkForwardAndReverse.get(1).getNombreArchivo();
+                        forward_reads = "http://gencellservicetwo.com/files_selfdecode/" + archivosOkForwardAndReverse.get(0).getNombreArchivo();
+                        reverse_reads = "http://gencellservicetwo.com/files_selfdecode/" + archivosOkForwardAndReverse.get(1).getNombreArchivo();
                         break;
                     } else if (archivosOkForwardAndReverse.get(1).getIdentificador().equals("1")) {
                         forward_reads = "http://gencellservicetwo.com/files_varsome/" + archivosOkForwardAndReverse.get(1).getNombreArchivo();
