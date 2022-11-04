@@ -367,6 +367,7 @@ public class SelfdecodeServiceProcess {
         EnviarArchivosSelfdecode enviarArchivosSelfdecode = new EnviarArchivosSelfdecode();
         
         System.out.println("Inicia Proceso ");
+        sessionBeanBaseFachada.actualizarEstadoBiolabSelfdecode(idPeticion, "ENVIANDO-SELFDECODE", profile, "70");
         fileId = createGenomeFile(profile);
 
         //Variables de los datos enviados a selfdecode

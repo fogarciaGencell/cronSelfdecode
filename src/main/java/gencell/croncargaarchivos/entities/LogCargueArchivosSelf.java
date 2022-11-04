@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "LogCargueArchivosSelf.findByDatosEnviados", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.datosEnviados = :datosEnviados")
     , @NamedQuery(name = "LogCargueArchivosSelf.findByIdProfileSelfdecode", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.idProfileSelfdecode = :idProfileSelfdecode")
     , @NamedQuery(name = "LogCargueArchivosSelf.findByIdGenomeFile", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.idGenomeFile = :idGenomeFile")
-    , @NamedQuery(name = "LogCargueArchivosSelf.findByEstado", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.estado = :estado")})
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByEstado", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.estado = :estado")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByFecha", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.fecha = :fecha")})
 public class LogCargueArchivosSelf implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -58,6 +59,9 @@ public class LogCargueArchivosSelf implements Serializable {
     @Size(max = 20)
     @Column(name = "estado")
     private String estado;
+    @Size(max = 40)
+    @Column(name = "fecha")
+    private String fecha;
 
     public LogCargueArchivosSelf() {
     }
@@ -120,6 +124,14 @@ public class LogCargueArchivosSelf implements Serializable {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 
     @Override
