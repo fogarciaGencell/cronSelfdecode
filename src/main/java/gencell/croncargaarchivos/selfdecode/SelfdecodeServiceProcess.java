@@ -48,7 +48,10 @@ import org.apache.http.entity.FileEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.File;
+import java.util.Date;
 import javax.ejb.EJB;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -79,6 +82,15 @@ public class SelfdecodeServiceProcess {
     private String code = "";
 
     public SelfdecodeServiceProcess() {
+        
+        if (sessionBeanBaseFachada == null) {
+            System.out.println("****************  fachada null Cron CARGA ARCHIVOS: ");
+            sessionBeanBaseFachada = this.lookupSessionBeanBaseFachadaLocal();
+            if (sessionBeanBaseFachada != null) {
+                System.out.println("****************  fachada obtenida Cron CARGA ARCHIVOS: ");
+            }
+        }
+        
         try {
             client = getDefaultHttpClient();
             response = null;
@@ -367,7 +379,7 @@ public class SelfdecodeServiceProcess {
         EnviarArchivosSelfdecode enviarArchivosSelfdecode = new EnviarArchivosSelfdecode();
         
         System.out.println("Inicia Proceso ");
-        sessionBeanBaseFachada.actualizarEstadoBiolabSelfdecode(idPeticion, "ENVIANDO-SELFDECODE", profile, "70");
+        //sessionBeanBaseFachada.actualizarEstadoBiolabSelfdecode(idPeticion, "ENVIANDO-SELFDECODE", profile, "70");
         fileId = createGenomeFile(profile);
 
         //Variables de los datos enviados a selfdecode
@@ -410,6 +422,8 @@ public class SelfdecodeServiceProcess {
             archivosSelf.setIdPersonas(idPersona);
             archivosSelf.setIdPeticion(idPeticion);
             archivosSelf.setDatosEnviados(jsonData);
+            archivosSelf.setFechaEnvio(new Date().toString());
+            archivosSelf.setFechaEstadoSelfdecode("");
             
             
             System.out.println("Guardando....");
@@ -463,6 +477,8 @@ public class SelfdecodeServiceProcess {
                 archivosSelf.setIdPersonas(idPersona);
                 archivosSelf.setIdPeticion(idPeticion);
                 archivosSelf.setDatosEnviados(jsonData);
+                archivosSelf.setFechaEnvio(new Date().toString());
+                archivosSelf.setFechaEstadoSelfdecode("");
 
                 System.out.println("Guardando....");
                 sessionBeanBaseFachada.Crear(archivosSelf);
@@ -671,5 +687,16 @@ public class SelfdecodeServiceProcess {
         SchemeRegistry sr = ccm.getSchemeRegistry();
         sr.register(new Scheme("https", 443, ssf));
         return new DefaultHttpClient(ccm, httpClient.getParams());
+    }
+    
+    private SessionBeanBaseFachadaLocal lookupSessionBeanBaseFachadaLocal() {
+        try {
+            Context c = new InitialContext();
+            return (SessionBeanBaseFachadaLocal) c.lookup("java:global/CronCargaArchivos/SessionBeanBaseFachada!gencell.croncargaarchivos.ejb.SessionBeanBaseFachadaLocal");
+        } catch (Exception e) {
+            System.out.println("ERROR AL OBTENER EL BEAN DE CRON CARGA ARCHIVOS: ");
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -5,7 +5,7 @@
  */
 package gencell.croncargaarchivos;
 
-import gencell.croncargaarchivos.controller.MBController;
+import gencell.croncargaarchivos.controller.MBControllerSelfdecode;
 import java.util.Date;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -19,13 +19,22 @@ public class JobCargaArchivos implements Job {
 
     public void execute(JobExecutionContext context)
             throws JobExecutionException {
-        System.out.println("**************************************************** INICIA EJECUCION *************************************************************************************************************" + new Date());
-        System.out.println("---------INICIO CRON CARGA ARCHIVOS VARSOME---------");        
-        /*MBController controller = new MBController();
-        controller.ejecutarTareaCargaArchivosSelfdecode();*/
-        System.out.println("---------FINALIZA CRON CARGA VARSOME---------");    
+        /*System.out.println("**************************************************** INICIA EJECUCION *************************************************************************************************************" + new Date());
+        System.out.println("---------INICIO CRON CARGA ARCHIVOS VARSOME---------");
+        MBController controller = new MBController();
+        controller.ejecutarTareaCargaArchivosVarsome();
+        System.out.println("---------FINALIZA CRON CARGA VARSOME---------");
+
+        System.out.println("**************************************************** INICIA EJECUCION SANITAS *************************************************************************************************************" + new Date());
+        System.out.println("---------INICIO CRON CARGA ARCHIVOS VARSOME-SANITAS ---------");
+        MBControllerSanitas controllerSanitas = new MBControllerSanitas();
+        controllerSanitas.ejecutarTareaCargaArchivosSanitas();
+        System.out.println("---------FINALIZA CRON CARGA VARSOME-SANITAS ---------");*/
         
-        
+        System.out.println("**************************************************** INICIA EJECUCION SELFDECODE *************************************************************************************************************" + new Date());
+        System.out.println("---------INICIO CRON CARGA ARCHIVOS SELFDECODE---------");
+        MBControllerSelfdecode controllerself = new MBControllerSelfdecode();
+        controllerself.ejecutarTareaCargaArchivosSelfdecode();
+        System.out.println("---------FINALIZA CRON CARGA SELFDECODE ---------");
     }
 }
-    

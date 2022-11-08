@@ -6,7 +6,7 @@
 package gencell.croncargaarchivos.ejb;
 
 import gencell.croncargaarchivos.entities.VWCronArchivosCarga;
-import gencell.croncargaarchivos.entities.VWCronSelfdecodeCargaArchivos;
+import gencell.croncargaarchivos.entities.VWCronSelfdecodeBorrar;
 import gencell.croncargaarchivos.entities.VWCronSelfdecodeListos;
 import gencell.croncargaarchivos.selfdecode.ProfilePersonaSelfdecode;
 import java.util.ArrayList;
@@ -137,6 +137,7 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
             System.out.print("Error en: actualizarEstadoPeticionBioLab " + e.getMessage());
             e.printStackTrace();
             //return "Error: " + e.getMessage();
+          
         }
     }
 
@@ -155,25 +156,70 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
         }
     }
 
+    public void actualizarEstadoSanitasBioLab(Integer id, String estado, String porcentaje) {
+        try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            String query = "UPDATE SanitasBioLab SET estado = '" + estado + "' , porcentaje='" + porcentaje + "' WHERE id = '" + id + "';";
+            Query q = em.createNativeQuery(query);
+            Integer retorno = q.executeUpdate();
+            System.out.print("Resultado actualizarEstadoSanitasBioLab " + retorno);
+            //return retorno.toString();
+        } catch (Exception e) {
+            System.out.print("Error en: actualizarEstadoSanitasBioLab " + e.getMessage());
+            e.printStackTrace();
+            //return "Error: " + e.getMessage();
+        }
+    }
+
+    public void actualizarEstadoYDescSanitasBioLab(Integer id, String estado, String descripcion, String porcentaje) {
+        try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            String query = "UPDATE SanitasBioLab SET estado = '" + estado + "' , descripcion = '" + descripcion + "' , porcentaje='" + porcentaje + "' WHERE id = '" + id + "';";
+            Query q = em.createNativeQuery(query);
+            Integer retorno = q.executeUpdate();
+            System.out.print("Resultado actualizarEstadoYDescSanitasBioLab " + retorno);
+            //return retorno.toString();
+        } catch (Exception e) {
+            System.out.print("Error en: actualizarEstadoYDescSanitasBioLab " + e.getMessage());
+            e.printStackTrace();
+            //return "Error: " + e.getMessage();
+        }
+    }
+
+    public void actualizarEstadoSanitasIdVarsomeBioLab(Integer id, String estado, String idVarsome, String porcentaje) {
+        try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            String query = "UPDATE SanitasBioLab SET estado = '" + estado + "', idVarsome = '" + idVarsome + "' , porcentaje='" + porcentaje + "' WHERE id = '" + id + "';";
+            Query q = em.createNativeQuery(query);
+            Integer retorno = q.executeUpdate();
+            System.out.print("Resultado actualizarEstadoSanitasIdVarsomeBioLab " + retorno);
+            //return retorno.toString();
+        } catch (Exception e) {
+            System.out.print("Error en: actualizarEstadoSanitasIdVarsomeBioLab " + e.getMessage());
+            e.printStackTrace();
+            //return "Error: " + e.getMessage();
+        }
+    }
+
     @Override
     public ProfilePersonaSelfdecode consultarProfile(Integer idPeticion) {
-       
+
         em.getEntityManagerFactory().getCache().evictAll();
         String query = "SELECT     pps.idPaciente,\n"
-                    + "pps.idProfileSelfdecode \n"
-                     + "FROM       PeticionBioLab pbl \n"
-                     + "JOIN       Peticion pet \n"
-                     + "ON         pbl.idPeticion=pet.idPeticion \n"
-                     + "JOIN       ProfilePersonaSelfdecode pps \n"
-                     + "ON         pps.idPaciente=pet.idPaciente \n"
-                     + "WHERE      pbl.idPeticion=" + idPeticion + ";";
+                + "pps.idProfileSelfdecode \n"
+                + "FROM       PeticionBioLab pbl \n"
+                + "JOIN       Peticion pet \n"
+                + "ON         pbl.idPeticion=pet.idPeticion \n"
+                + "JOIN       ProfilePersonaSelfdecode pps \n"
+                + "ON         pps.idPaciente=pet.idPaciente \n"
+                + "WHERE      pbl.idPeticion=" + idPeticion + ";";
         Query q = em.createNativeQuery(query, ProfilePersonaSelfdecode.class);
         if (q.getResultList() == null || q.getResultList().isEmpty()) {
             return null;
         } else {
             return (ProfilePersonaSelfdecode) q.getResultList().get(0);
         }
-       
+
     }
 
 //    @Override
@@ -188,11 +234,10 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
 //        }
 //        
 //    }
-
     @Override
     public List<VWCronSelfdecodeListos> obtenerArchivosListos(Integer idPeticion) {
         em.getEntityManagerFactory().getCache().evictAll();
-        String query = "select * from VWCronSelfdecodeListos where idPeticion = "+ idPeticion+ " limit 2;";
+        String query = "select * from VWCronSelfdecodeListos where idPeticion = " + idPeticion + " limit 2;";
         Query q = em.createNativeQuery(query, VWCronSelfdecodeListos.class);
         if (q.getResultList() == null || q.getResultList().isEmpty()) {
             return null;
@@ -203,7 +248,7 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
 
     @Override
     public void actualizarEstadoBiolabSelfdecode(Integer idPeticion, String estado, String profile, String porcentaje) {
-        
+
         try {
             em.getEntityManagerFactory().getCache().evictAll();
             String query = "UPDATE PeticionBioLab SET estado = '" + estado + "', idVarsome = '" + profile + "' , porcentaje='" + porcentaje + "' WHERE idPeticion = '" + idPeticion + "';";
@@ -219,16 +264,42 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
     }
 
     @Override
-    public void actualizarEstadoYDescPeticionBioLabSelfdecode(Integer id, String estado, String descripcion, String porcentaje) {
-         try {
+    public void actualizarEstadoYDescPeticionBioLabSelfdecode(Integer idPeticion, String estado, String descripcion, String porcentaje) {
+        try {
             em.getEntityManagerFactory().getCache().evictAll();
-            String query = "UPDATE PeticionBioLab SET estado = '" + estado + "' , descripcion = '" + descripcion + "' , porcentaje='" + porcentaje + "' WHERE id = '" + id + "';";
+            String query = "UPDATE PeticionBioLab SET estado = '" + estado + "' , descripcion = '" + descripcion + "' , porcentaje='" + porcentaje + "' WHERE idPeticion = '" + idPeticion + "';";
             Query q = em.createNativeQuery(query);
             Integer retorno = q.executeUpdate();
             System.out.print("Resultado actualizarEstadoPeticionBioLab Selfdecode " + retorno);
-            //return retorno.toString();
         } catch (Exception e) {
             System.out.print("Error en: actualizarEstadoPeticionBioLab Selfdecode" + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<VWCronSelfdecodeBorrar> obtenerArchivosSelfBorrar(Integer idPeticion) {
+        em.getEntityManagerFactory().getCache().evictAll();
+        String query = "select * from VWCronSelfdecodeBorrar where idPeticion = " + idPeticion + " limit 2;";
+        Query q = em.createNativeQuery(query, VWCronSelfdecodeBorrar.class);
+        if (q.getResultList() == null || q.getResultList().isEmpty()) {
+            return null;
+        } else {
+            return (List<VWCronSelfdecodeBorrar>) q.getResultList();
+        }
+    }
+
+    @Override
+    public void actualizarEstadoSelfTablaLog(String genomeFile, String estado, String fechaSelf) {
+         try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            String query = "UPDATE LogCargueArchivosSelf SET estado = '" + estado + "', fechaEstadoSelfdecode = '" + fechaSelf + "' WHERE idGenomeFile = '" + genomeFile + "';";
+            Query q = em.createNativeQuery(query);
+            Integer retorno = q.executeUpdate();
+            System.out.print("Resultado actualizarEstadoSelfTablaLog " + retorno);
+            //return retorno.toString();
+        } catch (Exception e) {
+            System.out.print("Error en: actualizarEstadoSelfTablaLog " + e.getMessage());
             e.printStackTrace();
             //return "Error: " + e.getMessage();
         }

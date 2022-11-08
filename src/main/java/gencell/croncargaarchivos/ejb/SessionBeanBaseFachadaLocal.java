@@ -5,9 +5,8 @@
  */
 package gencell.croncargaarchivos.ejb;
 
-
 import gencell.croncargaarchivos.entities.VWCronArchivosCarga;
-import gencell.croncargaarchivos.entities.VWCronSelfdecodeCargaArchivos;
+import gencell.croncargaarchivos.entities.VWCronSelfdecodeBorrar;
 import gencell.croncargaarchivos.entities.VWCronSelfdecodeListos;
 import gencell.croncargaarchivos.selfdecode.ProfilePersonaSelfdecode;
 import java.util.List;
@@ -46,13 +45,22 @@ public interface SessionBeanBaseFachadaLocal {
 
     public void actualizarEstadoPeticionIdVarsomeBioLab(Integer id, String estado, String idVarsome, String porcentaje);
 
-    public ProfilePersonaSelfdecode consultarProfile(Integer idPeticion);  
-    
-    //public List<VWCronSelfdecodeCargaArchivos> obtenerArchivosSelfdecode(Integer idPeticion);
-    
+    public void actualizarEstadoSanitasBioLab(Integer id, String estado, String porcentaje);
+
+    public void actualizarEstadoYDescSanitasBioLab(Integer id, String estado, String descripcion, String porcentaje);
+
+    public void actualizarEstadoSanitasIdVarsomeBioLab(Integer id, String estado, String idVarsome, String porcentaje);
+
+    public ProfilePersonaSelfdecode consultarProfile(Integer idPeticion);
+
     public List<VWCronSelfdecodeListos> obtenerArchivosListos(Integer idPeticion);
-    
+
     public void actualizarEstadoBiolabSelfdecode(Integer idPeticion, String estado, String idVarsome, String porcentaje);
+
+    public void actualizarEstadoYDescPeticionBioLabSelfdecode(Integer idPeticion, String estado, String descripcion, String porcentaje);
     
-    public void actualizarEstadoYDescPeticionBioLabSelfdecode(Integer id, String estado, String descripcion, String porcentaje);
+    public List<VWCronSelfdecodeBorrar> obtenerArchivosSelfBorrar(Integer idPeticion);
+    
+    public void actualizarEstadoSelfTablaLog(String genomeFile, String estado, String fechaSelf);
+    
 }

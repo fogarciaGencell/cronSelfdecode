@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "LogCargueArchivosSelf.findByIdProfileSelfdecode", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.idProfileSelfdecode = :idProfileSelfdecode")
     , @NamedQuery(name = "LogCargueArchivosSelf.findByIdGenomeFile", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.idGenomeFile = :idGenomeFile")
     , @NamedQuery(name = "LogCargueArchivosSelf.findByEstado", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.estado = :estado")
-    , @NamedQuery(name = "LogCargueArchivosSelf.findByFecha", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.fecha = :fecha")})
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByFechaEnvio", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.fechaEnvio = :fechaEnvio")
+    , @NamedQuery(name = "LogCargueArchivosSelf.findByFechaEstadoSelfdecode", query = "SELECT l FROM LogCargueArchivosSelf l WHERE l.fechaEstadoSelfdecode = :fechaEstadoSelfdecode")})
 public class LogCargueArchivosSelf implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -60,8 +61,11 @@ public class LogCargueArchivosSelf implements Serializable {
     @Column(name = "estado")
     private String estado;
     @Size(max = 40)
-    @Column(name = "fecha")
-    private String fecha;
+    @Column(name = "fechaEnvio")
+    private String fechaEnvio;
+    @Size(max = 40)
+    @Column(name = "fechaEstadoSelfdecode")
+    private String fechaEstadoSelfdecode;
 
     public LogCargueArchivosSelf() {
     }
@@ -126,12 +130,20 @@ public class LogCargueArchivosSelf implements Serializable {
         this.estado = estado;
     }
 
-    public String getFecha() {
-        return fecha;
+    public String getFechaEnvio() {
+        return fechaEnvio;
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
+    public void setFechaEnvio(String fechaEnvio) {
+        this.fechaEnvio = fechaEnvio;
+    }
+
+    public String getFechaEstadoSelfdecode() {
+        return fechaEstadoSelfdecode;
+    }
+
+    public void setFechaEstadoSelfdecode(String fechaEstadoSelfdecode) {
+        this.fechaEstadoSelfdecode = fechaEstadoSelfdecode;
     }
 
     @Override
