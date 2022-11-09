@@ -408,6 +408,7 @@ public class SelfdecodeServiceProcess {
             }
             if (succedd == "false") {
                 mensaje = "Fallido";
+                sessionBeanBaseFachada.actualizarEstadoBiolabSelfdecode(idPeticion, "UPLOADING-ERROR", profile, "85");
             }
 
             idScanJob = startScanJob(fileId);
@@ -463,6 +464,7 @@ public class SelfdecodeServiceProcess {
                 }
                 if (succedd == "false") {
                     mensaje = "Fallido";
+                    sessionBeanBaseFachada.actualizarEstadoBiolabSelfdecode(idPeticion, "UPLOADING-ERROR", profile, "85");
                 }
 
                 idScanJob = startScanJob(fileId);

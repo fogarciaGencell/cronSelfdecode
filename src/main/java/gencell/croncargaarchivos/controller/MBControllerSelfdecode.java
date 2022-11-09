@@ -275,47 +275,48 @@ public class MBControllerSelfdecode implements Serializable {
             estado = consultarEstado.obtenerEstadoFile(file);
             archivosBorrar = sessionBeanBaseFachada.obtenerArchivosSelfBorrar(idPeticion); // trae 2 resultados
             System.out.println("idPEticion: " + idPeticion );
+            System.out.println("Estado: " + estado);
             if (archivosBorrar != null && archivosBorrar.size() == 2) {// valida si vienen los dos archivos para eliminar forward y reverse
-                if (estado != null && estado.equals("COMPLETE")) {
-                    
+                if (estado != null && estado.equals("COMPLETED")) {
+                    System.out.println("COMPLETED");
                     // Actualiza la fecha y el estado obtenido de selfdecode en la tabla del log
                     String fechaSelfOk = "";
                     fechaSelfOk = new Date().toString();
                     sessionBeanBaseFachada.actualizarEstadoSelfTablaLog(file, estado, fechaSelfOk);
                     
-                    File fichero1 = new File(PATH_ARCHIVOS_SELFDECODE + archivosBorrar.get(0).getNombreArchivo());
-                    File fichero2 = new File(PATH_ARCHIVOS_SELFDECODE + archivosBorrar.get(1).getNombreArchivo());
+                    File fichero1 = new File(PATH_ARCHIVOS_LOCAL + archivosBorrar.get(0).getNombreArchivo());
+                    File fichero2 = new File(PATH_ARCHIVOS_LOCAL + archivosBorrar.get(1).getNombreArchivo());
 
                     // Valida existencia de fichero 1
                     if (!fichero1.exists()) {
-                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(archivosBorrar.get(0).getId(), "FINALIZADO", "", "100");
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo(archivosBorrar.get(0).getId(), "FINALIZADO", "", "100");
                         System.out.println("El fichero " + archivosBorrar.get(0).getNombreArchivo() + " ya no existe");
                         return;
                     }
 
                     // valida existencia de fichero 2
                     if (!fichero2.exists()) {
-                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(archivosBorrar.get(1).getId(), "FINALIZADO", "", "100");
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo(archivosBorrar.get(1).getId(), "FINALIZADO", "", "100");
                         System.out.println("El fichero " + archivosBorrar.get(1).getNombreArchivo() + " ya no existe");
                         return;
                     }
 
                     // Elimina Fichero 1
                     if (fichero1.delete()) {
-                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(archivosBorrar.get(0).getId(), "", "FINALIZADO", "100");
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo(archivosBorrar.get(0).getId(), "FINALIZADO", "", "100");
                         System.out.println("El fichero " + archivosBorrar.get(0).getNombreArchivo() + " ha sido borrados satisfactoriamente");
                     } else {
                         System.out.println("El fichero " + archivosBorrar.get(0).getNombreArchivo() + " no puede ser borrado");
-                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(idPeticion, "", "ERROR BORRANDO ARCHIVO", "95");
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo(archivosBorrar.get(0).getId(), "", "ERROR BORRANDO ARCHIVO", "95");
                     }
 
                     // Elimina Fichero 2 
                     if (fichero2.delete()) {
-                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(archivosBorrar.get(1).getId(), "", "FINALIZADO", "100");
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo(archivosBorrar.get(1).getId(), "FINALIZADO", "", "100");
                         System.out.println("El fichero " + archivosBorrar.get(1).getNombreArchivo() + " ha sido borrados satisfactoriamente");
                     } else {
                         System.out.println("El fichero " + archivosBorrar.get(1).getNombreArchivo() + " no puede ser borrado");
-                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecode(idPeticion, "", "ERROR BORRANDO ARCHIVO", "95");
+                        sessionBeanBaseFachada.actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo(archivosBorrar.get(1).getId(), "", "ERROR BORRANDO ARCHIVO", "95");
                     }
                 }
                 

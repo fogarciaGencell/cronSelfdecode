@@ -51,6 +51,7 @@ public interface SessionBeanBaseFachadaLocal {
 
     public void actualizarEstadoSanitasIdVarsomeBioLab(Integer id, String estado, String idVarsome, String porcentaje);
 
+    // Consultas proceso Selfdecode
     public ProfilePersonaSelfdecode consultarProfile(Integer idPeticion);
 
     public List<VWCronSelfdecodeListos> obtenerArchivosListos(Integer idPeticion);
@@ -59,7 +60,9 @@ public interface SessionBeanBaseFachadaLocal {
 
     public void actualizarEstadoYDescPeticionBioLabSelfdecode(Integer idPeticion, String estado, String descripcion, String porcentaje);
     
-    public List<VWCronSelfdecodeBorrar> obtenerArchivosSelfBorrar(Integer idPeticion);
+     public void actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo(Integer idPeticion, String estado, String descripcion, String porcentaje);
+   
+     public List<VWCronSelfdecodeBorrar> obtenerArchivosSelfBorrar(Integer idPeticion);
     
     public void actualizarEstadoSelfTablaLog(String genomeFile, String estado, String fechaSelf);
     

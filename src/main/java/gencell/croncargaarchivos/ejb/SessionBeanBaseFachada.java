@@ -201,6 +201,7 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
         }
     }
 
+    // Consultas proceso Selfdecode
     @Override
     public ProfilePersonaSelfdecode consultarProfile(Integer idPeticion) {
 
@@ -302,6 +303,21 @@ public class SessionBeanBaseFachada implements SessionBeanBaseFachadaLocal {
             System.out.print("Error en: actualizarEstadoSelfTablaLog " + e.getMessage());
             e.printStackTrace();
             //return "Error: " + e.getMessage();
+        }
+    }
+
+    @Override
+    public void actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo(Integer id, String estado, String descripcion, String porcentaje) {
+
+         try {
+            em.getEntityManagerFactory().getCache().evictAll();
+            String query = "UPDATE PeticionBioLab SET estado = '" + estado + "' , descripcion = '" + descripcion + "' , porcentaje='" + porcentaje + "' WHERE id = '" + id + "';";
+            Query q = em.createNativeQuery(query);
+            Integer retorno = q.executeUpdate();
+            System.out.print("Resultado actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo Selfdecode " + retorno);
+        } catch (Exception e) {
+            System.out.print("Error en: actualizarEstadoYDescPeticionBioLabSelfdecodeArchivo Selfdecode" + e.getMessage());
+            e.printStackTrace();
         }
     }
 
