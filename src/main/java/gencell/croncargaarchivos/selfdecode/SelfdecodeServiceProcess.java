@@ -215,7 +215,7 @@ public class SelfdecodeServiceProcess {
 
     //--------------------------------------------------------------------------------------------------
     public void uploadFile(String fileName, String url) {
-        System.out.println("INICIA UPLOAD FILE ");
+        //System.out.println("INICIA UPLOAD FILE ");
         try {
             // Variables
             Gson gson = new Gson();
@@ -232,7 +232,7 @@ public class SelfdecodeServiceProcess {
             String line = "";
             StringBuffer result = new StringBuffer();
             response = client.execute(put);
-            System.out.println("EJECUTO EL CARGUE DEL ARCHIVO POR PUT");
+            //System.out.println("EJECUTO EL CARGUE DEL ARCHIVO POR PUT");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
@@ -248,18 +248,19 @@ public class SelfdecodeServiceProcess {
 
                 }
 
-                System.out.println("Rspuesta UPLOADFILE: " + response.toString());
 
             }
         } catch (IOException ex) {
             Logger.getLogger(SelfdecodeServiceProcess.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("FINALIZA UPLOAD_FILE");
     }
 
     public String completeUpload(String uploadId) {
-        //System.out.println("INICIA COMPLETE UPLOAD");
+        //Variables
         String retorno = "";
+        String mensaje = "";
+        String estado = "";
+        String codigo = "";
         try {
             // Variables
             Gson gson = new Gson();
@@ -286,9 +287,9 @@ public class SelfdecodeServiceProcess {
 
                 if (response.getStatusLine().getStatusCode() == 200) {
                     JSONObject object = new JSONObject(result.toString());
-                    String codigo = ("" + response.getStatusLine().getStatusCode());
-                    String mensaje = result.toString();
-                    String estado = (object.get("did_succeed").toString());
+                    codigo = ("" + response.getStatusLine().getStatusCode());
+                    mensaje = result.toString();
+                    estado = (object.get("did_succeed").toString());
                     //System.out.println("Codigo " + codigo);
                     System.out.println("Complete Upload: " + mensaje);
                     retorno = estado;
@@ -340,7 +341,7 @@ public class SelfdecodeServiceProcess {
 
                     JSONObject object = new JSONObject(result.toString());
                     id = object.get("id").toString();
-                    System.out.println("Respuesta SCAN: " + result.toString());
+                    //System.out.println("Respuesta SCAN: " + result.toString());
 
                 } else {
                     id = "not found";
@@ -362,24 +363,24 @@ public class SelfdecodeServiceProcess {
     // --------------------------------------------------------------------------------------------------
     // Proceso Main
     public void iniciarEnvioArchivoSelfdecode(String profile, String forwardReads, String reverseReads, Integer idPersona, Integer idPeticion)  {
-        
+       
+        // VARIABLES    
         Gson gson = new Gson();
         String fileId = "";
         String fileIdConsulta = "";
         String uploadId = "";
         String url1 = "";
         String url2 = "";
-        String idScanJob = "";
         String estadoScan = "";
-        String estadoFile = "";
         String mensaje = "";
+        String idScanJob = "";
+        String estadoFile = "";
         String succedd = "";
         StartUploadDAO startUploadDAO = new StartUploadDAO();
         LogCargueArchivosSelf archivosSelf = new LogCargueArchivosSelf();
         EnviarArchivosSelfdecode enviarArchivosSelfdecode = new EnviarArchivosSelfdecode();
         
-        System.out.println("Inicia Proceso ");
-        //sessionBeanBaseFachada.actualizarEstadoBiolabSelfdecode(idPeticion, "ENVIANDO-SELFDECODE", profile, "70");
+        //System.out.println("Inicia Proceso ");
         fileId = createGenomeFile(profile);
 
         //Variables de los datos enviados a selfdecode
@@ -389,6 +390,7 @@ public class SelfdecodeServiceProcess {
         
         String jsonData = gson.toJson(enviarArchivosSelfdecode);
         
+        // Valida si se creo el file_id de selfdecode para continuar
         if (fileId != null) {
 
             startUploadDAO = startUpload(forwardReads, reverseReads, fileId);
@@ -396,10 +398,10 @@ public class SelfdecodeServiceProcess {
             uploadId = startUploadDAO.getId();
             url1 = startUploadDAO.getUrl1();
             url2 = startUploadDAO.getUrl2();
-            System.out.println("Inicia Cargue de Archivos");
+            //System.out.println("Inicia Cargue de Archivos");
             uploadFile(forwardReads, url1);
             uploadFile(reverseReads, url2);
-            System.out.println("Por favor espere.....");
+            //System.out.println("Por favor espere.....");
             succedd = completeUpload(uploadId);
 
             if (succedd == "true") {
@@ -414,7 +416,7 @@ public class SelfdecodeServiceProcess {
             idScanJob = startScanJob(fileId);
             estadoScan = obtenerEstadoFile(fileId);
 
-            System.out.println("Estado File: " + estadoScan);
+            //System.out.println("Estado File: " + estadoScan);
             
             // Guarda datos en la tabla LogCargueArchivosSelf como registro 
             archivosSelf.setIdProfileSelfdecode(profile);
@@ -427,9 +429,9 @@ public class SelfdecodeServiceProcess {
             archivosSelf.setFechaEstadoSelfdecode("");
             
             
-            System.out.println("Guardando....");
+            //System.out.println("Guardando....");
             sessionBeanBaseFachada.Crear(archivosSelf);
-            System.out.println("Guardado");
+            //System.out.println("Guardado");
 
         } else {
             
@@ -437,8 +439,8 @@ public class SelfdecodeServiceProcess {
             System.out.println("No se creo el idFile");
             fileIdConsulta = obtenerIdFile(profile); // Devuelve el Id del File proporcionando el profile 
             estadoFile = obtenerEstadoFile(fileIdConsulta); // Para consultar el estado de un File
-            System.out.println("File: " + fileIdConsulta + " en estado " + estadoFile);
-            System.out.println("Procediendo a eliminar el File......");
+            //System.out.println("File: " + fileIdConsulta + " en estado " + estadoFile);
+            //System.out.println("Procediendo a eliminar el File......");
             deleteFile(fileIdConsulta); // Elimina el File 
 
             fileId = createGenomeFile(profile);
@@ -450,11 +452,8 @@ public class SelfdecodeServiceProcess {
                 uploadId = startUploadDAO.getId();
                 url1 = startUploadDAO.getUrl1();
                 url2 = startUploadDAO.getUrl2();
-                System.out.println("Inicia Cargue de Archivos");
                 uploadFile(forwardReads, url1);
                 uploadFile(reverseReads, url2);
-                //ejecutarCurl2(forwardReads, url1);
-                //ejecutarCurl2(reverseReads, url2);
 
                 succedd = completeUpload(uploadId);
            
@@ -470,7 +469,7 @@ public class SelfdecodeServiceProcess {
                 idScanJob = startScanJob(fileId);
                 estadoScan = obtenerEstadoFile(fileId);
 
-                System.out.println("Estado File: " + estadoScan);
+                //System.out.println("Estado File: " + estadoScan);
 
                 // Guarda datos en la tabla como registro 
                 archivosSelf.setIdProfileSelfdecode(profile);
@@ -482,9 +481,8 @@ public class SelfdecodeServiceProcess {
                 archivosSelf.setFechaEnvio(new Date().toString());
                 archivosSelf.setFechaEstadoSelfdecode("");
 
-                System.out.println("Guardando....");
                 sessionBeanBaseFachada.Crear(archivosSelf);
-                System.out.println("Guardado");
+
             } else {
                 System.out.println("Error Fatal");
 
@@ -594,7 +592,6 @@ public class SelfdecodeServiceProcess {
     }
 
      public void deleteFile(String fileId) {
-        System.out.println("Eliminando File...");
         String retorno = "";
         try {
             // Variables
