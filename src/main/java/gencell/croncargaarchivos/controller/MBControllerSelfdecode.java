@@ -203,7 +203,12 @@ public class MBControllerSelfdecode implements Serializable {
         listArchivosListosSelf = sessionBeanBaseFachada.BuscarTodos(VWCronSelfdecodeListos.class);// Crea una lista con los objetos que estan listos 4 por consulta 2 envios a selfdecode por hilo
         if (!listArchivosListosSelf.isEmpty() || listArchivosListosSelf != null) { // Verifica si se obtiene resultados listos para enviar 
             for (int i = 0; i < listArchivosListosSelf.size(); i++) {
-
+               
+               // Limpiar Variables 
+               forward_reads = ""; 
+               reverse_reads = "";
+               profile = "";
+               
                 if (idPeticion != listArchivosListosSelf.get(i).getIdPeticion()) { // Valida si la peticion ya fue procesada
 
                     idPeticion = listArchivosListosSelf.get(i).getIdPeticion(); // Obtiene la peticion 
